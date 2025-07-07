@@ -199,3 +199,26 @@ export const getPresenceToday = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Server error' });
   }
 }
+
+// PATCH /api/presences/:id pour modifier le statut d'une présence
+export const updatePresenceStatus = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status, scanTime } = req.body;
+    if (!status) {
+      return res.status(400).json({ message: 'Le nouveau statut est requis.' });
+    }
+    const data: any = { status };
+    if (scanTime) {
+      data.scanTime = new Date(scanTime);
+    }
+    const updated = await prisma.presence.update({
+      where: { id },
+      data,
+      include: { user: true },
+    });
+    res.json(updated);
+  } catch (error) {
+    res.status(400).json({ message: error instanceof Error ? error.message : 'Erreur lors de la modification.' });
+  }
+};

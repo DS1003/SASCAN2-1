@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes';
 import presenceRoutes from './routes/presenceRoutes';
 import cron from 'node-cron';
 import { markAbsentAtFourPM } from './controllers/presenceController';
+import { backfillAbsences } from './backfillAbsences';
 
 dotenv.config();
 
@@ -21,8 +22,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/presences', presenceRoutes);
 app.use('/uploads', express.static('uploads'));
 
-// Tâche cron pour marquer les absents à 16h
-cron.schedule('10 15 * * 1-5', async () => { // 
+// Tâche cron pour marquer les absents à 13h
+cron.schedule('10 13 * * 1-5', async () => { // 
   console.log('--- --- --- Début de la tâche cron : marquage des absences (lundi à vendredi à 16h00) !!!');
   await markAbsentAtFourPM();
   console.log('--- --- --- Fin de la tâche cron !!!');
